@@ -3,3 +3,5 @@ node_modules
 
 ## commentaire
 *.log
+.env
+.exemple
