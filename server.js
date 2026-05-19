@@ -12,25 +12,42 @@ const connection = mysql.createConnection({
 
 connection.connect(); // connection
 
-const mockUser = [
-    {id: 0, name: "jean"},
-    {id: 1, name: "bas"},
-    {id: 2, name: "koto"}
+const data = [
+    {id: 1, name: "jean"},
+    {id: 2, name: "bas"},
+    {id: 3, name: "koto"},
+    {id: 4, name: "Hajo"}
 ]
 
 app.get("/", (req, res) => {
     res.status(200).send("Hi...!");
+    console.log(connection.state);
+    connection.query("SELECT * FROM Pret_bancaire;", (err, rows, fields) => {
+        if (err) throw err;
+        console.log("Ici : ", rows[1]);
+    });
 })
 
 app.get("/users", (req, res) => {
-    res.status(200).send(mockUser);
+    console.log();
+    res.status(200).send(data);
 })
 
 app.get("/users/:id", (req, res) => {
     const parsedId = req.params.id;
-    if (isNaN(parsedId)) return res.status(404).send('Bad request');
-    return res.status(200).send(parsedId);
+    const findData = data.find((user) => user.id === parseInt(parsedId)); //recherche des données
+    if (!findData) {
+        if (isNaN(parsedId)) {
+            // console.log(findData);
+            return res.status(400).send('Bad request');
+        };
+        return res.status(404).send('Data not found')
+    }
+    // console.log(data[parsedId].id);
+    return res.status(200).send(findData);
 })
+
+// connection.end();
 
 // connection.destroy(); // deconnection
 app.listen(port, () => {
